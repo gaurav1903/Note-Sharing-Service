@@ -29,4 +29,28 @@ public class NotesController {
     {
         return new ResponseEntity<>("", HttpStatus.OK);
     }
+    @PostMapping("/notes")
+    public ResponseEntity<?> addNote(@RequestBody Note note)
+    {
+        return new ResponseEntity<>("", HttpStatus.OK);
+    }
+
+    @PutMapping("/notes/{id}")
+    public ResponseEntity<?> updateNote(@PathVariable String id,@RequestBody Note note)
+    {
+        return new ResponseEntity<>("", HttpStatus.OK);
+    }
+
+    @DeleteMapping("/notes/{id}")
+    public ResponseEntity<?> deleteNote(@PathVariable String id)
+    {
+        return new ResponseEntity<>("", HttpStatus.OK);
+    }
+
+    @PostMapping("/notes/{id}/share")
+    public ResponseEntity<?> addNote(@PathVariable String id)
+    {
+        return new ResponseEntity<>("", HttpStatus.OK);
+    }
+
 }
