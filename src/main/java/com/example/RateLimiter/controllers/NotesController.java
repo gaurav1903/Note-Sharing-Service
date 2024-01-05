@@ -2,6 +2,7 @@ package com.example.RateLimiter.controllers;
 
 import com.example.RateLimiter.constants.ApplicationConstants;
 import com.example.RateLimiter.models.Note;
+import com.example.RateLimiter.models.NoteDTO;
 import com.example.RateLimiter.models.ResponseModel;
 import com.example.RateLimiter.services.NoteService;
 import com.example.RateLimiter.services.UserService;
@@ -44,36 +45,73 @@ public class NotesController {
     @GetMapping("/notes/{noteId}")
     public ResponseEntity<?> getNote(@PathVariable String noteId,@RequestHeader(name = "Authorization")String auth)
     {
-        return new ResponseEntity<>("", HttpStatus.OK);
+        String token=userService.verifyUserAndRefreshToken(auth);
+        if(token.startsWith(ApplicationConstants.TOKEN_VALIDATED)) {
+            String refreshedAuth=token.substring(ApplicationConstants.TOKEN_VALIDATED.length());
+
+            return new ResponseEntity<>(new ResponseModel(refreshedAuth,noteService.getNote(auth,noteId)), HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(ApplicationConstants.INVALID_TOKEN, HttpStatus.UNAUTHORIZED);
     }
 
     @GetMapping("/search")
     public ResponseEntity<?> getNoteByQuery(@RequestParam(name = "q") String q,@RequestHeader(name = "Authorization")String auth)
     {
-        return new ResponseEntity<>("", HttpStatus.OK);
+        String token=userService.verifyUserAndRefreshToken(auth);
+        if(token.startsWith(ApplicationConstants.TOKEN_VALIDATED)) {
+            String refreshedAuth=token.substring(ApplicationConstants.TOKEN_VALIDATED.length());
+
+            return new ResponseEntity<>(new ResponseModel(refreshedAuth,noteService.getNoteByQuery(auth,q)), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(ApplicationConstants.INVALID_TOKEN, HttpStatus.UNAUTHORIZED);
     }
     @PostMapping("/notes")
-    public ResponseEntity<?> addNote(@RequestBody Note note,@RequestHeader(name = "Authorization")String auth)
+    public ResponseEntity<?> addNote(@RequestBody NoteDTO note, @RequestHeader(name = "Authorization")String auth)
     {
-        return new ResponseEntity<>("", HttpStatus.OK);
+        String token=userService.verifyUserAndRefreshToken(auth);
+        if(token.startsWith(ApplicationConstants.TOKEN_VALIDATED)) {
+            String refreshedAuth=token.substring(ApplicationConstants.TOKEN_VALIDATED.length());
+            noteService.addNote(auth,note);
+            return new ResponseEntity<>(new ResponseModel(refreshedAuth,ApplicationConstants.OPERATION_SUCCESSFUL), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(ApplicationConstants.INVALID_TOKEN, HttpStatus.UNAUTHORIZED);
     }
 
     @PutMapping("/notes/{id}")
-    public ResponseEntity<?> updateNote(@PathVariable String id,@RequestBody Note note,@RequestHeader(name = "Authorization")String auth)
+    public ResponseEntity<?> updateNote(@PathVariable String id,@RequestBody NoteDTO note,@RequestHeader(name = "Authorization")String auth)
     {
-        return new ResponseEntity<>("", HttpStatus.OK);
+        String token=userService.verifyUserAndRefreshToken(auth);
+        if(token.startsWith(ApplicationConstants.TOKEN_VALIDATED)) {
+            String refreshedAuth=token.substring(ApplicationConstants.TOKEN_VALIDATED.length());
+
+            return new ResponseEntity<>(new ResponseModel(refreshedAuth,noteService.updateNote(auth,note,id)), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(ApplicationConstants.INVALID_TOKEN, HttpStatus.UNAUTHORIZED);
     }
 
     @DeleteMapping("/notes/{id}")
     public ResponseEntity<?> deleteNote(@PathVariable String id,@RequestHeader(name = "Authorization")String auth)
     {
-        return new ResponseEntity<>("", HttpStatus.OK);
+        String token=userService.verifyUserAndRefreshToken(auth);
+        if(token.startsWith(ApplicationConstants.TOKEN_VALIDATED)) {
+            String refreshedAuth=token.substring(ApplicationConstants.TOKEN_VALIDATED.length());
+
+            return new ResponseEntity<>(new ResponseModel(refreshedAuth,noteService.deleteNote(auth,id)), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(ApplicationConstants.INVALID_TOKEN, HttpStatus.UNAUTHORIZED);
     }
 
-    @PostMapping("/notes/{id}/share")
-    public ResponseEntity<?> addNote(@PathVariable String id,@RequestHeader(name = "Authorization")String auth)
+    @PostMapping("/notes/{userId}/share")
+    public ResponseEntity<?> shareNote(@PathVariable String userId,@RequestParam(name = "noteId") String noteId,@RequestHeader(name = "Authorization")String auth)
     {
-        return new ResponseEntity<>("", HttpStatus.OK);
+        String token=userService.verifyUserAndRefreshToken(auth);
+        if(token.startsWith(ApplicationConstants.TOKEN_VALIDATED)) {
+            String refreshedAuth=token.substring(ApplicationConstants.TOKEN_VALIDATED.length());
+
+            return new ResponseEntity<>(new ResponseModel(refreshedAuth,noteService.shareNote(auth,noteId,userId)), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(ApplicationConstants.INVALID_TOKEN, HttpStatus.UNAUTHORIZED);
     }
 
 }
