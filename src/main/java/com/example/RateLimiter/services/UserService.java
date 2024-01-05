@@ -1,8 +1,12 @@
 package com.example.RateLimiter.services;
 
+import com.example.RateLimiter.models.User;
+
 public interface UserService {
 
-    String register(String email, String encryptedPass);
+    String register(User user);
 
-    String login(String email, String encryptedPass);
+    String login(User user);
+
+    String verifyUser(String auth);
 }
