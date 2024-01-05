@@ -11,6 +11,7 @@ import com.example.RateLimiter.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -44,7 +45,9 @@ public class NoteServiceImpl implements NoteService {
     @Override
     public List<Note> getNoteByQuery(String auth, String query) {
         return notesRepository.searchByQueryAndOwnerEmail(query,userService.getEmailFromVerifiedToken(auth));
+//    return  new ArrayList<>();
     }
+
 
     @Override
     public void addNote(String auth, NoteDTO note1) {

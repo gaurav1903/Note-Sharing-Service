@@ -21,9 +21,6 @@ import java.util.List;
 public class NotesController {
 
     @Autowired
-    JWTUtils jwtUtils;
-
-    @Autowired
     NoteService noteService;
 
     @Autowired
