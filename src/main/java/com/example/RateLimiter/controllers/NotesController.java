@@ -2,6 +2,7 @@ package com.example.RateLimiter.controllers;
 
 import com.example.RateLimiter.constants.ApplicationConstants;
 import com.example.RateLimiter.models.Note;
+import com.example.RateLimiter.models.ResponseModel;
 import com.example.RateLimiter.services.NoteService;
 import com.example.RateLimiter.services.UserService;
 import com.example.RateLimiter.utils.JWTUtils;
@@ -29,8 +30,12 @@ public class NotesController {
     @GetMapping("/notes")
     public ResponseEntity<?> getAllNotes(@RequestHeader(name = "Authorization")String auth)
     {
-        if(userService.verifyUser(auth).equals(ApplicationConstants.TOKEN_VALIDATED))
-            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
+        String token=userService.verifyUserAndRefreshToken(auth);
+        if(token.startsWith(ApplicationConstants.TOKEN_VALIDATED)) {
+            String refreshedAuth=token.substring(ApplicationConstants.TOKEN_VALIDATED.length());
+
+            return new ResponseEntity<>(new ResponseModel(refreshedAuth,noteService.getAllNotes(auth)), HttpStatus.OK);
+        }
 
         return new ResponseEntity<>(ApplicationConstants.INVALID_TOKEN, HttpStatus.UNAUTHORIZED);
 

@@ -8,5 +8,7 @@ public interface UserService {
 
     String login(User user);
 
-    String verifyUser(String auth);
+    String verifyUserAndRefreshToken(String auth);
+
+    public String getEmailFromVerifiedToken(String auth);
 }

@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String verifyUser(String auth) {
+    public String verifyUserAndRefreshToken(String auth) {
         Claims claims=JWTUtils.extractSubject(auth);
         if(JWTUtils.isExpired(claims))
             return "expired token";
@@ -53,11 +53,19 @@ public class UserServiceImpl implements UserService {
                 if(user.isPresent())
                 {
                     if(user.get().getEncryptedPass().equals(encryptedPass))
-                        return ApplicationConstants.TOKEN_VALIDATED;
+                        return ApplicationConstants.TOKEN_VALIDATED+"-"+JWTUtils.refreshJWT(auth);
                 }
             }
             return ApplicationConstants.INVALID_TOKEN;
         }
+    }
+
+    @Override
+    public String getEmailFromVerifiedToken(String auth)
+    {
+        Claims claims= JWTUtils.extractSubject(auth);
+        String[] userInfo=claims.getSubject().split("-+-");
+        return userInfo[0];
     }
 
 }
