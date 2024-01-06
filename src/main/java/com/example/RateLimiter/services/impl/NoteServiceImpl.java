@@ -32,14 +32,17 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public Note getNote(String auth,String id) {
+    public List<Note> getNote(String auth,String id) {
         Optional<Note> note=notesRepository.findById(id);
+        List<Note>list=new ArrayList<>();
         if(note.isPresent())
         {
             if(note.get().getOwnerEmail().equalsIgnoreCase(userService.getEmailFromVerifiedToken(auth)))
-                return note.get();
+            {
+                list.add(note.get());
+            }
         }
-        return new Note();
+        return list;
     }
 
     @Override

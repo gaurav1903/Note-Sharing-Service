@@ -11,6 +11,6 @@ import java.util.List;
 public interface NotesRepository extends MongoRepository<Note,String> {
     List<Note> findByOwnerEmail(String email);
 
-    @Query("{$text:  {$search: ?0 }, 'email': ?1 }")
+    @Query("{$text:  {$search: ?0 }, 'ownerEmail': ?1 }")
     List<Note> searchByQueryAndOwnerEmail(String pat, String email);
 }

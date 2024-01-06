@@ -9,7 +9,7 @@ public interface NoteService {
 
     List<Note> getAllNotes(String auth);
 
-    Note getNote(String auth,String id);
+    List<Note> getNote(String auth,String id);
 
     List<Note> getNoteByQuery(String auth,String query);
 

@@ -1,20 +1,14 @@
 package com.example.RateLimiter.controllers;
 
 import com.example.RateLimiter.constants.ApplicationConstants;
-import com.example.RateLimiter.models.Note;
 import com.example.RateLimiter.models.NoteDTO;
 import com.example.RateLimiter.models.ResponseModel;
 import com.example.RateLimiter.services.NoteService;
 import com.example.RateLimiter.services.UserService;
-import com.example.RateLimiter.utils.JWTUtils;
-import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -25,7 +19,7 @@ public class NotesController {
 
     @Autowired
     UserService userService;
-    @GetMapping("/notes")
+    @GetMapping(value = "/notes", produces = "application/json")
     public ResponseEntity<?> getAllNotes(@RequestHeader(name = "Authorization")String auth)
     {
         String token=userService.verifyUserAndRefreshToken(auth);
@@ -63,14 +57,16 @@ public class NotesController {
         }
         return new ResponseEntity<>(ApplicationConstants.INVALID_TOKEN, HttpStatus.UNAUTHORIZED);
     }
-    @PostMapping("/notes")
+    @PostMapping(value = "/notes")
     public ResponseEntity<?> addNote(@RequestBody NoteDTO note, @RequestHeader(name = "Authorization")String auth)
     {
         String token=userService.verifyUserAndRefreshToken(auth);
-        if(token.startsWith(ApplicationConstants.TOKEN_VALIDATED)) {
+        if(token.startsWith(ApplicationConstants.TOKEN_VALIDATED) && note.getData()!=null) {
             String refreshedAuth=token.substring(ApplicationConstants.TOKEN_VALIDATED.length());
             noteService.addNote(auth,note);
-            return new ResponseEntity<>(new ResponseModel(refreshedAuth,ApplicationConstants.OPERATION_SUCCESSFUL), HttpStatus.OK);
+            String answer=ApplicationConstants.OPERATION_SUCCESSFUL;
+            ResponseModel model=new ResponseModel(refreshedAuth,answer);
+            return new ResponseEntity<>(model, HttpStatus.OK);
         }
         return new ResponseEntity<>(ApplicationConstants.INVALID_TOKEN, HttpStatus.UNAUTHORIZED);
     }
@@ -99,14 +95,14 @@ public class NotesController {
         return new ResponseEntity<>(ApplicationConstants.INVALID_TOKEN, HttpStatus.UNAUTHORIZED);
     }
 
-    @PostMapping("/notes/{userId}/share")
-    public ResponseEntity<?> shareNote(@PathVariable String userId,@RequestParam(name = "noteId") String noteId,@RequestHeader(name = "Authorization")String auth)
+    @PostMapping("/notes/{userEmail}/share")
+    public ResponseEntity<?> shareNote(@PathVariable String userEmail,@RequestParam(name = "noteId") String noteId,@RequestHeader(name = "Authorization")String auth)
     {
         String token=userService.verifyUserAndRefreshToken(auth);
         if(token.startsWith(ApplicationConstants.TOKEN_VALIDATED)) {
             String refreshedAuth=token.substring(ApplicationConstants.TOKEN_VALIDATED.length());
 
-            return new ResponseEntity<>(new ResponseModel(refreshedAuth,noteService.shareNote(auth,noteId,userId)), HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseModel(refreshedAuth,noteService.shareNote(auth,noteId,userEmail)), HttpStatus.OK);
         }
         return new ResponseEntity<>(ApplicationConstants.INVALID_TOKEN, HttpStatus.UNAUTHORIZED);
     }

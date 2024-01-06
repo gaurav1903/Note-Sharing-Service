@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
         else
         {
             String subject=claims.getSubject();
-            String[] info=subject.split("-+-");
+            String[] info=subject.split("-\\+-");
             if(info.length==2)
             {
                 String email=info[0];
@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService {
     public String getEmailFromVerifiedToken(String auth)
     {
         Claims claims= JWTUtils.extractSubject(auth);
-        String[] userInfo=claims.getSubject().split("-+-");
+        String[] userInfo=claims.getSubject().split("-\\+-");
         return userInfo[0];
     }
 

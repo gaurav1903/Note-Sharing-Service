@@ -42,8 +42,8 @@ public class JWTUtils {
 
     public static boolean isExpired (Claims claims) {
         if (claims.getExpiration().before(new Date()))
-            return false;
-        return true;
+            return true;
+        return false;
     }
 }
 
