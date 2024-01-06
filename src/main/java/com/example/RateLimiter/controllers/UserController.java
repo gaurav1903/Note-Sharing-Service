@@ -1,6 +1,8 @@
 package com.example.RateLimiter.controllers;
 
 
+import com.example.RateLimiter.configs.RateLimiterConfig;
+import com.example.RateLimiter.constants.ApplicationConstants;
 import com.example.RateLimiter.models.User;
 import com.example.RateLimiter.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,17 +20,25 @@ public class UserController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    RateLimiterConfig rateLimiterConfig;
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User user)
     {
-
-        return new ResponseEntity<>(userService.login(user),HttpStatus.OK);
+        if(rateLimiterConfig.rateLimiter().tryAcquire())
+            return new ResponseEntity<>(userService.login(user),HttpStatus.OK);
+        else
+            return  new ResponseEntity<>(ApplicationConstants.TOO_MANY_REQUESTS, HttpStatus.SERVICE_UNAVAILABLE);
     }
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody User user)
     {
-        return new ResponseEntity<>(userService.register(user),HttpStatus.OK);
+        if(rateLimiterConfig.rateLimiter().tryAcquire())
+            return new ResponseEntity<>(userService.register(user),HttpStatus.OK);
+        else
+            return  new ResponseEntity<>(ApplicationConstants.TOO_MANY_REQUESTS, HttpStatus.SERVICE_UNAVAILABLE);
     }
 
 }

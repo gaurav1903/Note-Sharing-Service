@@ -8,4 +8,8 @@ public class ApplicationConstants {
 
     public static String OPERATION_FAILED= "Operation Failed";
 
+    public static double requestLimit=200.0;
+
+    public static String TOO_MANY_REQUESTS= "Rate Limit Exceeded. Please try again later";
+
 }
