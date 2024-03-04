@@ -1,4 +1,3 @@
-# SpeerAssignment
 
 # Note Sharing Service
 ## Features
